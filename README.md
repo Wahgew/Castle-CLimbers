@@ -1,2 +1,2 @@
-# Castle-CLimbers
+# Castle-Climbers
 Java Auto Scroller Game.
