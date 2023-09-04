@@ -1,73 +1,78 @@
 package ASG;
-import java.awt.Image;
-import java.awt.event.KeyEvent;
-import javax.swing.ImageIcon;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
-public class Player {
-    int y; // current y
-    int dx; // change in x
-    int x; // current x
-    int dy;
-    Image idle;
-    public Player () {
-        ImageIcon i = new  ImageIcon("Images/Knight.png");
-        idle = i.getImage();
-        y = 172;
-        x = 10;
+public class Player implements Renderable, Updateable{
+    private static double width = 75;
+    private static double height = 75;
+    private double x;
+    private double y;
+    private int layer = 1;
+    private static BufferedImage knight;
+    private double speed = 200;
+
+    public Player(double x, double y) throws IOException {
+        this.x = x;
+        this.y = y;
+
+        knight = ImageIO.read(new File("Images/tempKnight.png")); //tempKnight.png
+        Render.addRenderables(this);
+        Updater.addUpdatables(this);
     }
 
-    public void move() {
-        x = x + dx;
-        y = y + dy;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public Image getImage() {
-        return idle;
+    public double getY() {
+        return y;
     }
 
-
-    // TODO: 8/28/2023 Create Key Movement for WASD & Arrow Keys.
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            dx = -3;
-        }
-        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            dx = 3;
-        }
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-            dy = -3;
-        }
-        if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-            dy = 3;
-        }
+    public double getHeight() {
+        return height;
     }
 
-    public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            dx = 0;
-        }
-        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            dx = 0;
-        }
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-            dy = 0;
-        }
-        if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-            dy = 0;
-        }
+    public double getWidth() {
+        return width;
     }
 
+    public static void setWidth(double width) {
+        Player.width = width;
+    }
+
+    public static void setHeight(double height) {
+        Player.height = height;
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+        g.drawImage(knight, (int)x, (int)y, (int)width, (int)height, null);
+    }
+
+    @Override
+    public int getLayer() {
+        return layer;
+    }
+
+    @Override
+    public void update() {
+        if(Controls.keys[Controls.RIGHT]){
+            x += speed * FPS.getDeltaTime();
+        }
+
+        if(Controls.keys[Controls.LEFT]) {
+            x -= speed * FPS.getDeltaTime();
+        }
+        if(Controls.keys[Controls.UP]) {
+            y -= speed * FPS.getDeltaTime();
+        }
+
+        if(Controls.keys[Controls.DOWN]) {
+            y += speed * FPS.getDeltaTime();
+        }
+    }
 }
